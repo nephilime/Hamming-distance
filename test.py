@@ -59,7 +59,8 @@ def get_frames(input_file,save_frames=False):
         container.close()
     return True
 
-hash_file_content = get_frames(input_file)     
+#generating hashs
+# hash_file_content = get_frames(input_file)     
 # hash_file_content = get_frames(input_file_ref)     
 
 ref_json = json.load(open(input_file_ref.replace(".ts", ".json")))
@@ -81,8 +82,16 @@ def compare_hashes(ref_json, json_content):
     for key in ref_json:        
         diff[key] = xor_hashes(json_content["0"], ref_json[key])
         if diff[key] == 0 :
-            print("No difference:" + str(key))
+            print("No difference:" + str(key)) #imposible if video cnverted 
     min_diff_key = min(diff, key=diff.get) 
+
+    ####
+    print(min_diff_key)
+    for key1 in json_content:
+        ref_key1 = int(key1) + int(min_diff_key)
+        print("ref_frame number: " + str(ref_key1) + " content_frame number: "  + str(key1) + " Hamming distance: " + str(xor_hashes(json_content[key1], ref_json[str(ref_key1)])))              
+    ####
+
     return frames_to_TC(int(min_diff_key)) + " Hamming distance: " + str(diff[min_diff_key]) 
          
 print(compare_hashes(ref_json, json_content))
